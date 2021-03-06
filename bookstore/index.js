@@ -1,9 +1,11 @@
 const express = require('express')
 const mongoose = require('mongoose')
+const book = require('./models/book')
 const Book = require('./models/book')
 const User = require('./models/user')
 const app = express()
 app.set("view engine" , "ejs")
+app.use(express.urlencoded({extended : true}))
 
 app.use(express.static(__dirname + "/public"));
 let MONGODB_URI = "mongodb://deven:dev123@cluster0-shard-00-00.4pnhv.mongodb.net:27017,cluster0-shard-00-01.4pnhv.mongodb.net:27017,cluster0-shard-00-02.4pnhv.mongodb.net:27017/bookstore?ssl=true&replicaSet=Cluster0-shard-0'&authSource=admin&retryWrites=true&w=majority" 
@@ -37,8 +39,7 @@ app.get('/ragister', (req,res)=> {
 })
 
 app.post('/ragister', async(req,res) => {
-       const {email,fName,lName,gender,moblieNo,password} = req.body
-        console.log('hi')
+       const {email,fName,lName,gender,moblieNo,password} = req.body.ragister
         
         const user = new User({
             email,
@@ -50,7 +51,7 @@ app.post('/ragister', async(req,res) => {
         })
         await user.save();
        console.log("done")
-        res.redirect(`/books`)
+        res.redirect('/books')
     })
 app.get('/index', (req,res)=> {
     let book = new Book({
@@ -71,11 +72,9 @@ app.get('/about', (req,res)=> {
 app.get('/contact', (req,res)=> {
     res.render('contact')
 })
-app.get('/signin', (req,res)=> {
-    res.render('login')
-})
+
 app.get('/books', (req,res)=> {
-    words.find().exec((err, data) => {
+    book.find().exec((err, data) => {
         if(data) {
             // res.render('home', {result : data, alphabet, letter})
             res.json(data)
